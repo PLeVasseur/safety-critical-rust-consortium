@@ -1,0 +1,6 @@
+[book]
+authors = ["Pete LeVasseur"]
+language = "en"
+multilingual = false
+src = "src"
+title = "Safety-Critical Rust Coding Guidelines"
