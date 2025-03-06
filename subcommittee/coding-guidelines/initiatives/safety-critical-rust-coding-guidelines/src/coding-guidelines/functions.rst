@@ -3,8 +3,8 @@ Functions
 
 This section covers guidelines for function definitions and usage.
 
-.. guideline:: Function Naming
-   :id: G_001
+.. guideline:: Function Naming Guideline
+   :id: G_FUNCTIONS_001
    :status: draft
    :tags: readability
    :category: functions
@@ -13,13 +13,14 @@ This section covers guidelines for function definitions and usage.
    Functions should use lowercase snake_case for naming.
 
    .. rationale:: -
-      :id: RAT_001
+      :id: RAT_FUNCTIONS_001
+      :status: draft
 
       Consistent naming conventions improve code readability and maintainability. 
       Using verb phrases makes the purpose of functions immediately clear.
 
    .. bad_example:: -
-      :id: BAD_EX_001
+      :id: BAD_EX_FUNCTIONS_001
       :status: draft
    
        .. code-block:: rust
@@ -29,7 +30,7 @@ This section covers guidelines for function definitions and usage.
          }
 
    .. good_example:: -
-      :id: GOOD_EX_001
+      :id: GOOD_EX_FUNCTIONS_001
       :status: draft
 
        .. code-block:: rust
@@ -39,8 +40,8 @@ This section covers guidelines for function definitions and usage.
          }  
 
 
-.. guideline:: Function Naming
-   :id: G_002
+.. guideline:: Some Other Function Guideline
+   :id: G_FUNCTIONS_002
    :status: draft
    :tags: readability
    :category: functions
@@ -49,14 +50,14 @@ This section covers guidelines for function definitions and usage.
    Functions should use lowercase snake_case for naming.
 
    .. rationale:: -
-      :id: RAT_002
+      :id: RAT_FUNCTIONS_002
       :status: draft
 
       Consistent naming conventions improve code readability and maintainability. 
       Using verb phrases makes the purpose of functions immediately clear.
 
    .. bad_example:: -
-      :id: BAD_EX_002
+      :id: BAD_EX_FUNCTIONS_002
       :status: draft
    
        .. code-block:: rust
@@ -66,7 +67,7 @@ This section covers guidelines for function definitions and usage.
          }
 
    .. good_example:: -
-      :id: GOOD_EX_002
+      :id: GOOD_EX_FUNCTIONS_002
       :status: draft
 
        .. code-block:: rust
@@ -74,3 +75,4 @@ This section covers guidelines for function definitions and usage.
          fn calculate_total_price(items: &[Item]) -> f64 {
              // ...
          }  
+
