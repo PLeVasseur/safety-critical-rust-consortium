@@ -21,6 +21,14 @@ extensions = [
     'sphinx_needs'
 ]
 
+# Add this configuration instead
+needs_extra_links = [
+    # Your existing links
+]
+
+# Add this setting to enable JSON export
+needs_build_json = True
+
 # Configure sphinx-needs
 needs_types = [
     dict(directive="guideline", title="Guideline", prefix="G_", color="#BFD8D2", style="node"),
