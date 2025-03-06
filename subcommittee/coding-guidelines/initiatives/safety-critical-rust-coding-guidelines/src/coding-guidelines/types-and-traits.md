@@ -12,7 +12,7 @@
 
 ##### Rule 4.3.3.2.A: Avoid implicit wrapping behavior in integer math
 
-Category: Encouraged
+Recommendation: Encouraged
 
 Automation: Possible
 
