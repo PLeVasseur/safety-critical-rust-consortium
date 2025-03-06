@@ -4,7 +4,7 @@ _Note_: Early, subject to changes.
 
 ## Building the coding guidelines
 
-FLS uses `Sphinx`_ to build a rendered version of the specification, and `uv`_ to install and manage
+SCR uses `Sphinx`_ to build a rendered version of the coding guidelines, and `uv`_ to install and manage
 Python dependencies (including Sphinx itself). To simplify building the rendered version, we created
 a script called `make.py` that takes care of invoking Sphinx with the right flags.
 
