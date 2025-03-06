@@ -25,27 +25,28 @@ extensions = [
 needs_id_regex = "^[A-Z0-9_]+"
 needs_build_json = True
 
-# Define the part types
-needs_part_types = [
-    {
-        "name": "recommendation",
-        "title": "Recommendation",
-        "color": "#FEDCD2",
-        "prefix": "REC_"
-    },
-    {
-        "name": "rationale",
-        "title": "Rationale",
-        "color": "#DF744A", 
-        "prefix": "RAT_"
-    },
-    {
-        "name": "example",
-        "title": "Example",
-        "color": "#BFD8D2",
-        "prefix": "EX_"
+# Define custom sections for needs
+needs_layouts = {
+    "guideline": {
+        "content": [
+            "content",
+            "rationale",
+            "good_example",
+            "bad_example"
+        ]
     }
-]
+}
+
+# Tell sphinx-needs which sections to render
+needs_render_contexts = {
+    "guideline": {
+        "content": ["content"],
+        "extra_content": ["rationale", "bad_example", "good_example"]
+    }
+}
+
+# Make sure these sections are included in the JSON
+needs_extra_sections = ["rationale", "good_example", "bad_example"]
 
 # Configure sphinx-needs
 needs_types = [
@@ -57,13 +58,6 @@ needs_types = [
         "style": "node"
     },
     {
-        "directive": "recommendation",
-        "title": "Recommendation",
-        "prefix": "REC_",
-        "color": "#FEDCD2", 
-        "style": "node"
-    },
-    {
         "directive": "rationale",
         "title": "Rationale",
         "prefix": "RAT_",
@@ -71,9 +65,16 @@ needs_types = [
         "style": "node"
     },
     {
-        "directive": "example",
-        "title": "Example",
-        "prefix": "EX_",
+        "directive": "good_example",
+        "title": "Good Example",
+        "prefix": "GOOD_EX_",
+        "color": "#729FCF", 
+        "style": "node"
+    },
+    {
+        "directive": "bad_example",
+        "title": "Bad Example",
+        "prefix": "BAD_EX_",
         "color": "#729FCF", 
         "style": "node"
     }
