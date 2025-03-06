@@ -21,19 +21,62 @@ extensions = [
     'sphinx_needs'
 ]
 
-# Add this configuration instead
-needs_extra_links = [
-    # Your existing links
-]
-
-# Add this setting to enable JSON export
+# Basic needs configuration
+needs_id_regex = "^[A-Z0-9_]+"
 needs_build_json = True
+
+# Define the part types
+needs_part_types = [
+    {
+        "name": "recommendation",
+        "title": "Recommendation",
+        "color": "#FEDCD2",
+        "prefix": "REC_"
+    },
+    {
+        "name": "rationale",
+        "title": "Rationale",
+        "color": "#DF744A", 
+        "prefix": "RAT_"
+    },
+    {
+        "name": "example",
+        "title": "Example",
+        "color": "#BFD8D2",
+        "prefix": "EX_"
+    }
+]
 
 # Configure sphinx-needs
 needs_types = [
-    dict(directive="guideline", title="Guideline", prefix="G_", color="#BFD8D2", style="node"),
-    dict(directive="recommendation", title="Recommendation", prefix="REC_", color="#FEDCD2", style="node"),
-    dict(directive="rationale", title="Rationale", prefix="RAT_", color="#DF744A", style="node"),
+    {
+        "directive": "guideline",
+        "title": "Guideline",
+        "prefix": "G_",
+        "color": "#BFD8D2", 
+        "style": "node"
+    },
+    {
+        "directive": "recommendation",
+        "title": "Recommendation",
+        "prefix": "REC_",
+        "color": "#FEDCD2", 
+        "style": "node"
+    },
+    {
+        "directive": "rationale",
+        "title": "Rationale",
+        "prefix": "RAT_",
+        "color": "#DF744A", 
+        "style": "node"
+    },
+    {
+        "directive": "example",
+        "title": "Example",
+        "prefix": "EX_",
+        "color": "#729FCF", 
+        "style": "node"
+    }
 ]
 
 needs_statuses = [
@@ -47,11 +90,16 @@ needs_tags = [
     dict(name="security", description="Security-related guideline"),
     dict(name="performance", description="Performance-related guideline"),
     dict(name="readability", description="Readability-related guideline"),
-    # Add more as needed
+    dict(name="human-error", description="Reducing human error guideline"),
+]
+
+needs_recommendations = [
+    dict(name="encouraged", description="This guideline is encouraged", color="#999999"),
+    dict(name="required", description="This guideline is required", color="#FFCC00"),
 ]
 
 # Enable needs export
-needs_extra_options = ["severity", "impact", "effort", "category"]
+needs_extra_options = ["category", "recommendation"]
 
 
 # -- Options for HTML output -------------------------------------------------

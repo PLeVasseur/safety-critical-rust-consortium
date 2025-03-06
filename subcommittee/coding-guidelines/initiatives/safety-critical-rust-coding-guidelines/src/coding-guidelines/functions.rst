@@ -5,32 +5,40 @@ This section covers guidelines for function definitions and usage.
 
 .. guideline:: Function Naming
    :id: FUNC_001
-   :status: approved
+   :status: draft
    :tags: readability
-   :severity: medium
-   :category: naming
+   :category: functions
+   :recommendation: encouraged
 
    Functions should use lowercase snake_case for naming.
 
-   .. recommendation::
-      :id: REC-FUNC-001
+.. rationale:: Function Naming Rationale
+   :id: RAT_FUNC_001
+   :status: draft
+   :tags: readability
+   :links: FUNC_001
 
-      Function names should be verb phrases that clearly describe what the function does.
+   Consistent naming conventions improve code readability and maintainability.
+   Using verb phrases makes the purpose of functions immediately clear.
 
-   .. rationale::
-      :id: RAT-FUNC-001
+.. example:: Function Naming Examples
+   :id: EX_FUNC_001
+   :status: draft
+   :tags: readability
+   :links: FUNC_001
 
-      Consistent naming conventions improve code readability and maintainability.
-      Using verb phrases makes the purpose of functions immediately clear.
-
+   **Good example:**
+   
    .. code-block:: rust
-
-      // Good
+   
       fn calculate_total_price(items: &[Item]) -> f64 {
           // ...
       }
-
-      // Bad
+   
+   **Bad example:**
+   
+   .. code-block:: rust
+   
       fn TotalPrice(items: &[Item]) -> f64 {
           // ...
       }
