@@ -1,10 +1,14 @@
-# Configuration file for the Sphinx documentation builder.
-#
-# For the full list of built-in configuration values, see the documentation:
-# https://www.sphinx-doc.org/en/master/usage/configuration.html
+# SPDX-License-Identifier: MIT OR Apache-2.0
+# SPDX-FileCopyrightText: The Ferrocene Developers
+
+# -- Path setup --------------------------------------------------------------
+
+import os
+import sys
+
+sys.path.append(os.path.abspath("../exts"))
 
 # -- Project information -----------------------------------------------------
-# https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
 project = 'Safety-Critical Rust Coding Guidelines'
 copyright = '2025, Contributors to Coding Guidelines Subcommittee'
@@ -18,11 +22,14 @@ release = '0.1'
 extensions = [
     'sphinx.ext.autodoc',
     'sphinx.ext.viewcode',
-    'sphinx_needs'
+    'sphinx_needs',
+    'coding_guidelines',
 ]
 
 # Basic needs configuration
 needs_id_regex = "^[A-Z0-9_]+"
+needs_title_optional = True
+needs_id_from_title = False
 needs_build_json = True
 
 # Define custom sections for needs

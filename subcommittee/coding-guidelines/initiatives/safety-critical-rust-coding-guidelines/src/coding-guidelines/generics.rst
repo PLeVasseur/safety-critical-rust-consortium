@@ -4,20 +4,17 @@ Generics
 This section covers guidelines for function definitions and usage.
 
 .. guideline:: Generics Guideline 1
-   :id: G_GENERICS_001
    :status: draft
    :tags: readability
    :category: functions
-   :recommendation: encouraged
+   :recommendation: required
 
    Generics should...
 
-   .. rationale:: -
-      :id: RAT_GENERICS_001
+   .. rationale:: 
       :status: draft
 
-      Consistent naming conventions improve code readability and maintainability. 
-      Using verb phrases makes the purpose of functions immediately clear.
+      foo
 
    .. bad_example:: -
       :id: BAD_EX_GENERICS_001
@@ -41,7 +38,6 @@ This section covers guidelines for function definitions and usage.
 
 
 .. guideline:: Generics Guideline 2
-   :id: G_GENERICS_002
    :status: draft
    :tags: readability
    :category: functions
@@ -49,12 +45,10 @@ This section covers guidelines for function definitions and usage.
 
    Generics should...
 
-   .. rationale:: -
-      :id: RAT_GENERICS_002
+   .. rationale:: 
       :status: draft
 
-      Consistent naming conventions improve code readability and maintainability. 
-      Using verb phrases makes the purpose of functions immediately clear.
+      bar
 
    .. bad_example:: -
       :id: BAD_EX_GENERICS_002
