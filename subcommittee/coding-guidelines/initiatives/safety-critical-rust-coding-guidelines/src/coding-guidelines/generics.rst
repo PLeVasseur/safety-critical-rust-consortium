@@ -16,24 +16,24 @@ This section covers guidelines for function definitions and usage.
 
       foo
 
-   .. bad_example:: -
-      :id: BAD_EX_GENERICS_001
-      :status: draft
+   .. bad_example:: 
+      :status: approved
    
        .. code-block:: rust
    
          fn TotalPrice(items: &[Item]) -> f64 {
              // ...
+             // Something about generics 1
          }
 
-   .. good_example:: -
-      :id: GOOD_EX_GENERICS_001
-      :status: draft
+   .. good_example:: 
+      :status: approved
 
        .. code-block:: rust
    
          fn calculate_total_price(items: &[Item]) -> f64 {
              // ...
+             // Something about generics 1
          }  
 
 
@@ -46,27 +46,27 @@ This section covers guidelines for function definitions and usage.
    Generics should...
 
    .. rationale:: 
-      :status: draft
+      :status: approved
 
       bar
 
-   .. bad_example:: -
-      :id: BAD_EX_GENERICS_002
-      :status: draft
+   .. bad_example:: 
+      :status: approved
    
        .. code-block:: rust
    
          fn TotalPrice(items: &[Item]) -> f64 {
              // ...
+             // Something about generics 2
          }
 
-   .. good_example:: -
-      :id: GOOD_EX_GENERICS_002
-      :status: draft
+   .. good_example:: 
+      :status: approved
 
        .. code-block:: rust
    
          fn calculate_total_price(items: &[Item]) -> f64 {
              // ...
+             // Something about generics 2
          }  
 
