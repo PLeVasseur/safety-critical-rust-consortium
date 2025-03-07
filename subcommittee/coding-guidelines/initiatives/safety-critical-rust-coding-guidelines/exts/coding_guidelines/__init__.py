@@ -35,8 +35,8 @@ def source_transformer(app, docname, source):
             prefix_map = {
                 "guideline": "GUI_",
                 "rationale": "RAT_", 
-                "bad_example": "BAD_",
-                "good_example": "GOOD_"
+                "bad_example": "BAD_EX_",
+                "good_example": "GOOD_EX_"
             }
             prefix = prefix_map.get(need_type, need_type[:3].upper() + "_")
             

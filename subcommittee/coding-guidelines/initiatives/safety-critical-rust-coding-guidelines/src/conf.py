@@ -60,7 +60,7 @@ needs_types = [
     {
         "directive": "guideline",
         "title": "Guideline",
-        "prefix": "G_",
+        "prefix": "GUI_",
         "color": "#BFD8D2", 
         "style": "node"
     },
