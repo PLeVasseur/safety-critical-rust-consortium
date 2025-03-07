@@ -1,5 +1,5 @@
 # SPDX-License-Identifier: MIT OR Apache-2.0
-# SPDX-FileCopyrightText: The Ferrocene Developers
+# SPDX-FileCopyrightText: The Coding Guidelines Subcommittee Contributors
 
 # -- Path setup --------------------------------------------------------------
 
@@ -16,7 +16,6 @@ author = 'Contributors to Coding Guidelines Subcommittee'
 release = '0.1'
 
 # -- General configuration ---------------------------------------------------
-# https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
 
 # Add sphinx-needs to extensions
 extensions = [
@@ -111,7 +110,6 @@ needs_extra_options = ["category", "recommendation"]
 
 
 # -- Options for HTML output -------------------------------------------------
-# https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
 
 # Configure the theme
 html_theme = 'sphinx_rtd_theme'

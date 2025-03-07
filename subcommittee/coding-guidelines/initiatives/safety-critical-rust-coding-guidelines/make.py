@@ -1,6 +1,6 @@
 #!/usr/bin/env -S uv run
 # SPDX-License-Identifier: MIT OR Apache-2.0
-# SPDX-FileCopyrightText: The Ferrocene Developers
+# SPDX-FileCopyrightText: The Coding Guidelines Subcommittee Contributors
 
 import os
 from builder import build_cli
