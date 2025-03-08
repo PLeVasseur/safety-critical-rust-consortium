@@ -8,6 +8,7 @@ This section covers guidelines for function definitions and usage.
 
 .. guideline:: Function Naming Guideline
    :status: approved
+   :fls: fls_sye3d17l9bf5
    :tags: readability
    :category: functions
    :recommendation: encouraged
@@ -43,6 +44,7 @@ This section covers guidelines for function definitions and usage.
 
 .. guideline:: Some Other Function Guideline
    :status: draft
+   :fls: fls_sye3d17l9bf5
    :tags: readability
    :category: functions
    :recommendation: encouraged

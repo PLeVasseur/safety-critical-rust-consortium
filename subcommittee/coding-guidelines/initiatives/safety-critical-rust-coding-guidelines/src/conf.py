@@ -31,29 +31,6 @@ needs_title_optional = True
 needs_id_from_title = False
 needs_build_json = True
 
-# Define custom sections for needs
-needs_layouts = {
-    "guideline": {
-        "content": [
-            "content",
-            "rationale",
-            "good_example",
-            "bad_example"
-        ]
-    }
-}
-
-# Tell sphinx-needs which sections to render
-needs_render_contexts = {
-    "guideline": {
-        "content": ["content"],
-        "extra_content": ["rationale", "bad_example", "good_example"]
-    }
-}
-
-# Make sure these sections are included in the JSON
-needs_extra_sections = ["rationale", "good_example", "bad_example"]
-
 # Configure sphinx-needs
 needs_types = [
     {
@@ -86,6 +63,29 @@ needs_types = [
     }
 ]
 
+# Define custom sections for needs
+needs_layouts = {
+    "guideline": {
+        "content": [
+            "content",
+            "rationale",
+            "good_example",
+            "bad_example"
+        ]
+    }
+}
+
+# Tell sphinx-needs which sections to render
+needs_render_contexts = {
+    "guideline": {
+        "content": ["content"],
+        "extra_content": ["rationale", "bad_example", "good_example"]
+    }
+}
+
+# Make sure these sections are included in the JSON
+needs_extra_sections = ["rationale", "good_example", "bad_example"]
+
 needs_statuses = [
     dict(name="draft", description="This guideline is in draft stage", color="#999999"),
     dict(name="proposed", description="This guideline is proposed for review", color="#FFCC00"),
@@ -106,8 +106,7 @@ needs_recommendations = [
 ]
 
 # Enable needs export
-needs_extra_options = ["category", "recommendation"]
-
+needs_extra_options = ["category", "recommendation", "fls"]
 
 # -- Options for HTML output -------------------------------------------------
 

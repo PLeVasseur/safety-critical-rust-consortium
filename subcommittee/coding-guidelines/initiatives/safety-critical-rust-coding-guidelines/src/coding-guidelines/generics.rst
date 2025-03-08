@@ -8,6 +8,7 @@ This section covers guidelines for function definitions and usage.
 
 .. guideline:: Generics Guideline 1
    :status: draft
+   :fls: fls_sye3d17l9bf5
    :tags: readability
    :category: functions
    :recommendation: required
@@ -42,6 +43,7 @@ This section covers guidelines for function definitions and usage.
 
 .. guideline:: Generics Guideline 2
    :status: draft
+   :fls: fls_sye3d17l9bf5
    :tags: readability
    :category: functions
    :recommendation: encouraged
