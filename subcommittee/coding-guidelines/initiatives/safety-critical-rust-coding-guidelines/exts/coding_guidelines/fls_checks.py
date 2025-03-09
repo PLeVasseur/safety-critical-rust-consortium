@@ -104,11 +104,13 @@ def gather_fls_paragraph_ids(base_url):
         base_url: The base URL of the Ferrocene Language Specification
         
     Returns:
-        A dictionary mapping paragraph IDs to their direct URLs with fragment identifiers
+        A dictionary mapping paragraph IDs to dictionaries containing:
+        - url: Direct URL with fragment identifier
+        - section_id: The section identifier (e.g., "4.3.1:9")
     """
     logger.info("Gathering FLS paragraph IDs from %s", base_url)
     
-    # Dictionary to store paragraph IDs and their direct URLs
+    # Dictionary to store paragraph IDs and their metadata
     paragraph_ids = {}
     
     # Set to track visited URLs to avoid duplicates
@@ -117,8 +119,8 @@ def gather_fls_paragraph_ids(base_url):
     # Queue of URLs to process
     urls_to_process = [base_url]
     
-    # Regular expression to find paragraph IDs
-    paragraph_id_pattern = re.compile(r'<span class="spec-paragraph-id" id="(fls_[a-zA-Z0-9]{12})">')
+    # Regular expression to find paragraph IDs and their section IDs
+    paragraph_id_pattern = re.compile(r'<span class="spec-paragraph-id" id="(fls_[a-zA-Z0-9]{12})">([^<]+)</span>')
     
     # Regular expression to find links to other pages
     link_pattern = re.compile(r'<a class="reference internal" href="([^"#]+\.html)"')
@@ -144,12 +146,19 @@ def gather_fls_paragraph_ids(base_url):
             response.raise_for_status()  # Raise exception for HTTP errors
             page_content = response.text
             
-            # Extract paragraph IDs
+            # Extract paragraph IDs and their section IDs
             for match in paragraph_id_pattern.finditer(page_content):
                 paragraph_id = match.group(1)
+                section_id = match.group(2).strip()
+                
                 # Create direct link to the paragraph by adding the ID as a fragment
                 direct_url = f"{page_url}#{paragraph_id}"
-                paragraph_ids[paragraph_id] = direct_url
+                
+                # Store both URL and section ID
+                paragraph_ids[paragraph_id] = {
+                    "url": direct_url,
+                    "section_id": section_id
+                }
             
             # Find links to other pages
             for match in link_pattern.finditer(page_content):
