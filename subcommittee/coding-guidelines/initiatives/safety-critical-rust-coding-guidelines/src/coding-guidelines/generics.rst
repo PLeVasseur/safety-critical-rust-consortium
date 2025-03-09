@@ -42,7 +42,7 @@ This section covers guidelines for function definitions and usage.
 
 
 .. guideline:: Generics Guideline 2
-   :status: draft
+   :status: approved
    :fls: fls_sye3d17l9bf5
    :tags: readability
    :category: functions
