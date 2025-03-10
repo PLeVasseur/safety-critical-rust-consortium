@@ -26,7 +26,7 @@ extensions = [
 ]
 
 # Basic needs configuration
-needs_id_regex = "^[A-Z0-9_]+"
+needs_id_regex = "^[A-Za-z0-9_]+"
 needs_title_optional = True
 needs_id_from_title = False
 needs_build_json = True
@@ -36,28 +36,28 @@ needs_types = [
     {
         "directive": "guideline",
         "title": "Guideline",
-        "prefix": "GUI_",
+        "prefix": "gui_",
         "color": "#BFD8D2", 
         "style": "node"
     },
     {
         "directive": "rationale",
         "title": "Rationale",
-        "prefix": "RAT_",
+        "prefix": "rat_",
         "color": "#DF744A", 
         "style": "node"
     },
     {
         "directive": "good_example",
         "title": "Good Example",
-        "prefix": "GOOD_EX_",
+        "prefix": "good_ex_",
         "color": "#729FCF", 
         "style": "node"
     },
     {
         "directive": "bad_example",
         "title": "Bad Example",
-        "prefix": "BAD_EX_",
+        "prefix": "bad_ex_",
         "color": "#729FCF", 
         "style": "node"
     }

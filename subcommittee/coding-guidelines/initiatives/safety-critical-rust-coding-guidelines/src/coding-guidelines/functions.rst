@@ -7,6 +7,7 @@ Functions
 This section covers guidelines for function definitions and usage.
 
 .. guideline:: Function Naming Guideline
+   :id: gui_ekiq2zlh1kG4
    :status: approved
    :fls: fls_sye3d17l9bf5
    :tags: readability
@@ -16,12 +17,14 @@ This section covers guidelines for function definitions and usage.
    Functions should use lowercase snake_case for naming.
 
    .. rationale:: 
+      :id: rat_nhjTBhhrMt2C
       :status: approved
 
       Consistent naming conventions improve code readability and maintainability. 
       Using verb phrases makes the purpose of functions immediately clear.
 
    .. bad_example:: 
+      :id: bad_ex_ZWToGooHDw2e
       :status: approved
    
        .. code-block:: rust
@@ -32,6 +35,7 @@ This section covers guidelines for function definitions and usage.
          }
 
    .. good_example:: 
+      :id: good_ex_DiHaxiq6SLOG
       :status: approved
 
        .. code-block:: rust
@@ -43,6 +47,7 @@ This section covers guidelines for function definitions and usage.
 
 
 .. guideline:: Some Other Function Guideline
+   :id: gui_JIu2xC7UK9ie
    :status: draft
    :fls: fls_sye3d17l9bf5
    :tags: readability
@@ -52,11 +57,13 @@ This section covers guidelines for function definitions and usage.
    Another kind of guideline
 
    .. rationale:: 
+      :id: rat_101ggIrpH4dB
       :status: approved
 
       Other function guideline text
 
    .. bad_example:: 
+      :id: bad_ex_FqOrS0eGg3BY
       :status: approved
    
        .. code-block:: rust
@@ -66,6 +73,7 @@ This section covers guidelines for function definitions and usage.
          }
 
    .. good_example:: 
+      :id: good_ex_YFV1Vq8LMPGX
       :status: approved
 
        .. code-block:: rust
