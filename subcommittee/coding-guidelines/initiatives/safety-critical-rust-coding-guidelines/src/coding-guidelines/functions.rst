@@ -26,6 +26,8 @@ This section covers guidelines for function definitions and usage.
    .. bad_example:: 
       :id: bad_ex_ZWToGooHDw2e
       :status: approved
+
+      A plain-text description of the example.
    
        .. code-block:: rust
    
@@ -37,6 +39,8 @@ This section covers guidelines for function definitions and usage.
    .. good_example:: 
       :id: good_ex_DiHaxiq6SLOG
       :status: approved
+
+      A plain-text description of the example.
 
        .. code-block:: rust
    

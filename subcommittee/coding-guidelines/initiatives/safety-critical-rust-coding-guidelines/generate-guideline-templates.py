@@ -2,13 +2,13 @@
 # SPDX-License-Identifier: MIT OR Apache-2.0
 # SPDX-FileCopyrightText: The Coding Guidelines Subcommittee Contributors
 
+import argparse
 import string
 import random
 
 # Configuration
 CHARS = string.ascii_letters + string.digits
 ID_LENGTH = 12
-NUM_TEMPLATES = 5  # Default to generate one template, can be changed as needed
 
 def generate_id(prefix):
     """Generate a random ID with the given prefix."""
@@ -42,35 +42,56 @@ def generate_guideline_template():
    .. bad_example:: 
       :id: {bad_example_id}
       :status: draft
+
+      Explanation of code example.
    
-       .. code-block:: rust
+      .. code-block:: rust
    
-         fn example_function() {{
-             // Bad implementation
-         }}
+        fn example_function() {{
+            // Bad implementation
+        }}
 
    .. good_example:: 
       :id: {good_example_id}
       :status: draft
+
+      Explanation of code example.
    
-       .. code-block:: rust
+      .. code-block:: rust
    
-         fn example_function() {{
-             // Good implementation
-         }}
+        fn example_function() {{
+            // Bad implementation
+        }}
 """
     return template
 
+def parse_args():
+    """Parse command-line arguments."""
+    parser = argparse.ArgumentParser(
+        description="Generate guideline templates with randomly generated IDs"
+    )
+    parser.add_argument(
+        "-n", 
+        "--number-of-templates", 
+        type=int, 
+        default=1,
+        help="Number of templates to generate (default: 1)"
+    )
+    return parser.parse_args()
+
 def main():
     """Generate the specified number of guideline templates."""
-    for i in range(NUM_TEMPLATES):
-        if NUM_TEMPLATES > 1:
+    args = parse_args()
+    num_templates = args.number_of_templates
+    
+    for i in range(num_templates):
+        if num_templates > 1:
             print(f"=== Template {i+1} ===\n")
         
         template = generate_guideline_template()
         print(template)
         
-        if NUM_TEMPLATES > 1 and i < NUM_TEMPLATES - 1:
+        if num_templates > 1 and i < num_templates - 1:
             print("\n" + "=" * 80 + "\n")
 
 if __name__ == "__main__":
