@@ -21,8 +21,24 @@ def check_fls(app, env):
     # First make sure all guidelines have correctly formatted FLS IDs
     check_fls_exists_and_valid_format(app, env)
     
-    # Gather all FLS paragraph IDs from the specification
-    fls_ids = gather_fls_paragraph_ids(fls_paragraph_ids_url)
+    # Gather all FLS paragraph IDs from the specification and get the raw JSON
+    fls_ids, raw_json_data = gather_fls_paragraph_ids(fls_paragraph_ids_url)
+    
+    # Error out if we couldn't get the raw JSON data
+    if not raw_json_data:
+        error_message = f"Failed to retrieve or parse the FLS specification from {fls_paragraph_ids_url}"
+        logger.error(error_message)
+        raise FLSValidationError(error_message)
+    
+    # Check for differences against lock file
+    has_differences, differences = check_fls_lock_consistency(app, env, raw_json_data)
+    if has_differences:
+        error_message = "The FLS specification has changed since the lock file was created:\n"
+        for diff in differences:
+            error_message += f"  - {diff}\n"
+        error_message += "\nPlease manually inspect FLS spec items whose checksums have changed as corresponding guidelines may need to account for these changes."
+        logger.error(error_message)
+        raise FLSValidationError(error_message)
     
     # Check if all referenced FLS IDs exist
     check_fls_ids_correct(app, env, fls_ids)
@@ -144,25 +160,24 @@ def gather_fls_paragraph_ids(json_url):
         json_url: The URL or path to the paragraph-ids.json file
         
     Returns:
-        A dictionary mapping paragraph IDs to dictionaries containing:
-        - url: Direct URL with fragment identifier
-        - section_id: The section identifier (e.g., "4.3.1:9")
+        Dictionary mapping paragraph IDs to metadata AND the complete raw JSON data
     """
     logger.info("Gathering FLS paragraph IDs from %s", json_url)
     
     # Dictionary to store paragraph IDs and their metadata
     paragraph_ids = {}
+    raw_json_data = None
     
     try:
         # Load the JSON file
         response = requests.get(json_url)
         response.raise_for_status()  # Raise exception for HTTP errors
-        logger.debug(f"Response status code: {response.status_code}")
         
-        # Try to parse the JSON data
+        # Parse the JSON data
         try:
-            data = response.json()
-            logger.debug(f"Successfully parsed JSON data")
+            raw_json_data = response.json()
+            data = raw_json_data  # Keep reference to the original data
+            logger.debug("Successfully parsed JSON data")
         except json.JSONDecodeError as e:
             logger.error(f"Failed to parse JSON: {e}")
             logger.debug(f"Response content preview: {response.text[:500]}...")
@@ -172,7 +187,7 @@ def gather_fls_paragraph_ids(json_url):
         if 'documents' not in data:
             logger.error("JSON does not have 'documents' key")
             logger.debug(f"JSON keys: {list(data.keys())}")
-            return {}
+            return {}, None
         
         # Base URL for constructing direct links
         base_url = "https://spec.ferrocene.dev/"
@@ -182,21 +197,18 @@ def gather_fls_paragraph_ids(json_url):
             doc_title = document.get('title', 'Unknown')
             doc_link = document.get('link', '')
             
-            logger.debug(f"Processing document: {doc_title}")
-            
             # Process each section in the document
             for section in document.get('sections', []):
                 section_title = section.get('title', 'Unknown')
                 section_id = section.get('id', '')
                 section_number = section.get('number', '')
                 
-                logger.debug(f"  Processing section: {section_number} - {section_title}")
-                
                 # Process each paragraph in the section
                 for paragraph in section.get('paragraphs', []):
                     para_id = paragraph.get('id', '')
                     para_number = paragraph.get('number', '')
                     para_link = paragraph.get('link', '')
+                    para_checksum = paragraph.get('checksum', '')
                     
                     # Skip entries without proper IDs
                     if not para_id or not para_id.startswith('fls_'):
@@ -211,23 +223,173 @@ def gather_fls_paragraph_ids(json_url):
                         "section_id": para_number,
                         "document_title": doc_title,
                         "section_title": section_title,
-                        "section_number": section_number
+                        "section_number": section_number,
+                        "checksum": para_checksum
                     }
         
         logger.info(f"Found {len(paragraph_ids)} FLS paragraph IDs")
-        
-        # If we found no IDs, that's likely an error - log more info
-        if not paragraph_ids:
-            logger.error("No paragraph IDs found in the JSON file")
-            logger.debug(f"Number of documents: {len(data.get('documents', []))}")
-            if data.get('documents'):
-                logger.debug(f"First document keys: {list(data['documents'][0].keys())}")
-            
-        return paragraph_ids
+        return paragraph_ids, raw_json_data
         
     except requests.exceptions.RequestException as e:
         logger.error(f"Error fetching paragraph IDs from {json_url}: {e}")
-        return {}
+        return {}, None
+
+
+def check_fls_lock_consistency(app, env, fls_raw_data):
+    """
+    Compare live FLS JSON data with the lock file to detect changes
+    
+    Args:
+        app: The Sphinx application
+        env: The Sphinx environment
+        fls_raw_data: Raw JSON data from the live specification
+        
+    Returns:
+        Tuple containing:
+        - Boolean indicating whether differences were found
+        - List of difference descriptions with affected guidelines (for error reporting)
+    """
+    logger.info("Checking FLS lock file consistency")
+    lock_path = app.confdir / 'fls.lock'
+    
+    # Get the needs data to find affected guidelines
+    data = SphinxNeedsData(env)
+    needs = data.get_needs_view()
+    
+    # Map of FLS IDs to guidelines that reference them
+    fls_to_guidelines = {}
+    for need_id, need in needs.items():
+        if need.get('type') == 'guideline':
+            fls_value = need.get("fls")
+            if fls_value:
+                if fls_value not in fls_to_guidelines:
+                    fls_to_guidelines[fls_value] = []
+                fls_to_guidelines[fls_value].append({
+                    'id': need_id,
+                    'title': need.get('title', 'Untitled')
+                })
+    
+    # Differences to report
+    differences = []
+    has_differences = False
+    
+    # If no lock file exists, skip checking
+    if not lock_path.exists():
+        logger.warning(f"No FLS lock file found at {lock_path}, skipping consistency check")
+        return False, []
+    
+    try:
+        # Load lock file
+        with open(lock_path, 'r', encoding='utf-8') as f:
+            locked_data = json.load(f)
+        
+        # Create maps of paragraph IDs to checksums for both live and locked data
+        live_checksums = {}
+        locked_checksums = {}
+        
+        # Extract from live data
+        for document in fls_raw_data.get('documents', []):
+            for section in document.get('sections', []):
+                for paragraph in section.get('paragraphs', []):
+                    para_id = paragraph.get('id', '')
+                    para_checksum = paragraph.get('checksum', '')
+                    para_number = paragraph.get('number', '')
+                    
+                    if para_id and para_id.startswith('fls_'):
+                        live_checksums[para_id] = {
+                            'checksum': para_checksum,
+                            'section_id': para_number
+                        }
+        
+        # Extract from locked data
+        for document in locked_data.get('documents', []):
+            for section in document.get('sections', []):
+                for paragraph in section.get('paragraphs', []):
+                    para_id = paragraph.get('id', '')
+                    para_checksum = paragraph.get('checksum', '')
+                    para_number = paragraph.get('number', '')
+                    
+                    if para_id and para_id.startswith('fls_'):
+                        locked_checksums[para_id] = {
+                            'checksum': para_checksum,
+                            'section_id': para_number
+                        }
+        
+        logger.info(f"Found {len(live_checksums)} paragraphs in live data")
+        logger.info(f"Found {len(locked_checksums)} paragraphs in lock file")
+        
+        # Format affected guidelines information
+        def format_affected_guidelines(fls_id):
+            affected = fls_to_guidelines.get(fls_id, [])
+            if not affected:
+                return "    No guidelines affected"
+            
+            result = []
+            for guideline in affected:
+                result.append(f"    - {guideline['id']}: {guideline['title']}")
+            return "\n".join(result)
+        
+        # Look for new IDs
+        new_ids = set(live_checksums.keys()) - set(locked_checksums.keys())
+        if new_ids:
+            for fls_id in sorted(new_ids):
+                diff_msg = f"New FLS ID added: {fls_id} ({live_checksums[fls_id]['section_id']})"
+                affected_msg = format_affected_guidelines(fls_id)
+                differences.append(f"{diff_msg}\n  Affected guidelines:\n{affected_msg}")
+            has_differences = True
+        
+        # Look for removed IDs
+        removed_ids = set(locked_checksums.keys()) - set(live_checksums.keys())
+        if removed_ids:
+            for fls_id in sorted(removed_ids):
+                diff_msg = f"FLS ID removed: {fls_id} ({locked_checksums[fls_id]['section_id']})"
+                affected_msg = format_affected_guidelines(fls_id)
+                differences.append(f"{diff_msg}\n  Affected guidelines:\n{affected_msg}")
+            has_differences = True
+        
+        # Check for checksum changes on existing IDs
+        common_ids = set(live_checksums.keys()) & set(locked_checksums.keys())
+        for fls_id in sorted(common_ids):
+            live_checksum = live_checksums[fls_id]['checksum']
+            locked_checksum = locked_checksums[fls_id]['checksum']
+            
+            changes = []
+            
+            if live_checksum != locked_checksum:
+                changes.append(
+                    f"Content changed for FLS ID {fls_id} ({live_checksums[fls_id]['section_id']}): " +
+                    f"checksum was {locked_checksum[:8]}... now {live_checksum[:8]}..."
+                )
+            
+            # Also check if section IDs have changed
+            live_section = live_checksums[fls_id]['section_id']
+            locked_section = locked_checksums[fls_id]['section_id']
+            
+            if live_section != locked_section:
+                changes.append(
+                    f"Section changed for FLS ID {fls_id}: {locked_section} -> {live_section}"
+                )
+            
+            if changes:
+                affected_msg = format_affected_guidelines(fls_id)
+                differences.append(f"{changes[0]}\n  Affected guidelines:\n{affected_msg}")
+                
+                # Add any additional changes separately
+                for i in range(1, len(changes)):
+                    differences.append(changes[i])
+                
+                has_differences = True
+        
+        if has_differences:
+            logger.warning(f"Found {len(differences)} differences between live FLS data and lock file")
+        else:
+            logger.info("No differences found between live FLS data and lock file")
+        
+        return has_differences, differences
+        
+    except (json.JSONDecodeError, IOError) as e:
+        logger.error(f"Error reading or parsing lock file {lock_path}: {e}")
+        return False, [f"Failed to read lock file: {e}"]
 
 
 def insert_fls_coverage(app, env, fls_ids):
