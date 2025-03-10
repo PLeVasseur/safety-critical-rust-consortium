@@ -159,7 +159,6 @@ def build_finished(app, exception):
     if exception is not None:
         return
     
-    logger = logging.getLogger('sphinx')
     logger.info("Generating guidelines IDs and checksums...")
     
     try:

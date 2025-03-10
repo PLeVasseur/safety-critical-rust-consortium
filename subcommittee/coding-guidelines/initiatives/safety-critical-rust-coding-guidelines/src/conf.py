@@ -97,7 +97,7 @@ needs_tags = [
     dict(name="security", description="Security-related guideline"),
     dict(name="performance", description="Performance-related guideline"),
     dict(name="readability", description="Readability-related guideline"),
-    dict(name="human-error", description="Reducing human error guideline"),
+    dict(name="reduce-human-error", description="Reducing human error guideline"),
 ]
 
 needs_recommendations = [
