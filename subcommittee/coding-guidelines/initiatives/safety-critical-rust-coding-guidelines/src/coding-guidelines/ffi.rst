@@ -1,6 +1,8 @@
 .. SPDX-License-Identifier: MIT OR Apache-2.0
    SPDX-FileCopyrightText: The Coding Guidelines Subcommittee Contributors
 
+.. default-domain:: coding-guidelines
+
 FFI
 ===
 
@@ -50,7 +52,7 @@ FFI
    :category: functions
    :recommendation: encouraged
 
-   Description of the guideline goes here.
+   The type needs to implement :std:`core::marker::Copy`.
 
    .. rationale:: 
       :id: rat_RQOSNhTPrQkf
