@@ -4,12 +4,14 @@
 import requests
 import logging
 import re
+import json
+from pathlib import Path
 from sphinx.errors import SphinxError
 from sphinx_needs.data import SphinxNeedsData
 
 # Get the Sphinx logger
 logger = logging.getLogger('sphinx')
-fls_url = "https://spec.ferrocene.dev/"
+fls_paragraph_ids_url = "https://spec.ferrocene.dev/paragraph-ids.json"
 
 class FLSValidationError(SphinxError):
     category = "FLS Validation Error"
@@ -20,7 +22,7 @@ def check_fls(app, env):
     check_fls_exists_and_valid_format(app, env)
     
     # Gather all FLS paragraph IDs from the specification
-    fls_ids = gather_fls_paragraph_ids(fls_url)
+    fls_ids = gather_fls_paragraph_ids(fls_paragraph_ids_url)
     
     # Check if all referenced FLS IDs exist
     check_fls_ids_correct(app, env, fls_ids)
@@ -134,85 +136,99 @@ def check_fls_ids_correct(app, env, fls_ids):
     logger.info("All FLS references in guidelines are valid")
 
 
-def gather_fls_paragraph_ids(base_url):
+def gather_fls_paragraph_ids(json_url):
     """
-    Gather all Ferrocene Language Specification paragraph IDs by crawling the specification.
+    Gather all Ferrocene Language Specification paragraph IDs from the paragraph-ids.json file.
     
     Args:
-        base_url: The base URL of the Ferrocene Language Specification
+        json_url: The URL or path to the paragraph-ids.json file
         
     Returns:
         A dictionary mapping paragraph IDs to dictionaries containing:
         - url: Direct URL with fragment identifier
         - section_id: The section identifier (e.g., "4.3.1:9")
     """
-    logger.info("Gathering FLS paragraph IDs from %s", base_url)
+    logger.info("Gathering FLS paragraph IDs from %s", json_url)
     
     # Dictionary to store paragraph IDs and their metadata
     paragraph_ids = {}
     
-    # Set to track visited URLs to avoid duplicates
-    visited_urls = set()
-    
-    # Queue of URLs to process
-    urls_to_process = [base_url]
-    
-    # Regular expression to find paragraph IDs and their section IDs
-    paragraph_id_pattern = re.compile(r'<span class="spec-paragraph-id" id="(fls_[a-zA-Z0-9]{12})">([^<]+)</span>')
-    
-    # Regular expression to find links to other pages
-    link_pattern = re.compile(r'<a class="reference internal" href="([^"#]+\.html)"')
-    
-    while urls_to_process:
-        current_url = urls_to_process.pop(0)
+    try:
+        # Load the JSON file
+        response = requests.get(json_url)
+        response.raise_for_status()  # Raise exception for HTTP errors
+        logger.debug(f"Response status code: {response.status_code}")
         
-        # Skip if already visited
-        if current_url in visited_urls:
-            continue
-        
-        visited_urls.add(current_url)
-        logger.debug("Processing URL: %s", current_url)
-        
+        # Try to parse the JSON data
         try:
-            # Normalize URL
-            page_url = current_url
-            if not page_url.startswith("http"):
-                page_url = base_url + page_url
+            data = response.json()
+            logger.debug(f"Successfully parsed JSON data")
+        except json.JSONDecodeError as e:
+            logger.error(f"Failed to parse JSON: {e}")
+            logger.debug(f"Response content preview: {response.text[:500]}...")
+            raise
+        
+        # Check if we have the expected document structure
+        if 'documents' not in data:
+            logger.error("JSON does not have 'documents' key")
+            logger.debug(f"JSON keys: {list(data.keys())}")
+            return {}
+        
+        # Base URL for constructing direct links
+        base_url = "https://spec.ferrocene.dev/"
+        
+        # Process each document in the JSON structure
+        for document in data['documents']:
+            doc_title = document.get('title', 'Unknown')
+            doc_link = document.get('link', '')
             
-            # Fetch and decode page content
-            response = requests.get(page_url)
-            response.raise_for_status()  # Raise exception for HTTP errors
-            page_content = response.text
+            logger.debug(f"Processing document: {doc_title}")
             
-            # Extract paragraph IDs and their section IDs
-            for match in paragraph_id_pattern.finditer(page_content):
-                paragraph_id = match.group(1)
-                section_id = match.group(2).strip()
+            # Process each section in the document
+            for section in document.get('sections', []):
+                section_title = section.get('title', 'Unknown')
+                section_id = section.get('id', '')
+                section_number = section.get('number', '')
                 
-                # Create direct link to the paragraph by adding the ID as a fragment
-                direct_url = f"{page_url}#{paragraph_id}"
+                logger.debug(f"  Processing section: {section_number} - {section_title}")
                 
-                # Store both URL and section ID
-                paragraph_ids[paragraph_id] = {
-                    "url": direct_url,
-                    "section_id": section_id
-                }
-            
-            # Find links to other pages
-            for match in link_pattern.finditer(page_content):
-                href = match.group(1)
-                # Skip non-HTML links, index, and search pages
-                if (href not in visited_urls and 
-                    not href.startswith("#") and 
-                    href != "index.html" and 
-                    href != "search.html"):
-                    urls_to_process.append(href)
+                # Process each paragraph in the section
+                for paragraph in section.get('paragraphs', []):
+                    para_id = paragraph.get('id', '')
+                    para_number = paragraph.get('number', '')
+                    para_link = paragraph.get('link', '')
                     
-        except requests.exceptions.RequestException as e:
-            logger.error("Error fetching %s: %s", page_url, e)
-    
-    logger.info("Found %d FLS paragraph IDs", len(paragraph_ids))
-    return paragraph_ids
+                    # Skip entries without proper IDs
+                    if not para_id or not para_id.startswith('fls_'):
+                        continue
+                    
+                    # Create the full URL
+                    direct_url = f"{base_url}{para_link}"
+                    
+                    # Store metadata
+                    paragraph_ids[para_id] = {
+                        "url": direct_url,
+                        "section_id": para_number,
+                        "document_title": doc_title,
+                        "section_title": section_title,
+                        "section_number": section_number
+                    }
+        
+        logger.info(f"Found {len(paragraph_ids)} FLS paragraph IDs")
+        
+        # If we found no IDs, that's likely an error - log more info
+        if not paragraph_ids:
+            logger.error("No paragraph IDs found in the JSON file")
+            logger.debug(f"Number of documents: {len(data.get('documents', []))}")
+            if data.get('documents'):
+                logger.debug(f"First document keys: {list(data['documents'][0].keys())}")
+            
+        return paragraph_ids
+        
+    except requests.exceptions.RequestException as e:
+        logger.error(f"Error fetching paragraph IDs from {json_url}: {e}")
+        return {}
+
 
 def insert_fls_coverage(app, env, fls_ids):
     """
@@ -232,14 +248,24 @@ def insert_fls_coverage(app, env, fls_ids):
         fls_ids[fls_id]['covered'] = False
         fls_ids[fls_id]['covering_needs'] = []  # List to store all covering guidelines
         
-        # Extract chapter information from section_id (e.g., "4.3.1:9" -> chapter 4)
-        section_parts = fls_ids[fls_id]['section_id'].split('.')
+        # Extract chapter information from section_id (e.g., "22.1:4" -> chapter 22)
+        section_id = fls_ids[fls_id]['section_id']
+        logger.debug(f"Processing section_id: {section_id} for {fls_id}")
+        
+        # Handle formats like "22.1:4", "4.3.1:9", or "A.1:2"
+        if ':' in section_id:
+            # Split at colon to get the section number without paragraph number
+            section_parts = section_id.split(':')[0].split('.')
+        else:
+            # Fallback if no colon present
+            section_parts = section_id.split('.')
+            
         if section_parts and section_parts[0].isdigit():
             chapter = int(section_parts[0])
             fls_ids[fls_id]['chapter'] = chapter
         else:
             # Handle appendices or other non-standard formats
-            first_char = fls_ids[fls_id]['section_id'][0] if fls_ids[fls_id]['section_id'] else None
+            first_char = section_id[0] if section_id else None
             if first_char and first_char.isalpha():
                 # For appendices like "A.1.1", use the letter as chapter
                 fls_ids[fls_id]['chapter'] = first_char
@@ -262,6 +288,7 @@ def insert_fls_coverage(app, env, fls_ids):
     logger.info(f"Found {total_references} references to FLS IDs in guidelines")
     logger.info(f"Found {len(unique_covered_ids)} unique FLS IDs covered by guidelines")
     return fls_ids
+
 
 def calculate_fls_coverage(fls_ids, fls_id_ignore_list):
     """
@@ -372,22 +399,4 @@ def log_coverage_report(coverage_data):
         else:
             logger.info(f"  Chapter {chapter}: {coverage:.2f}%")
 
-
-    # def insert_fls_coverage(app, env, fls_ids):
-    #     # here we should do the following:
-    #     # * enrich the fls_ids with whether that FLS ID is covered by the coding guidelines
-    #     pass
-    # 
-    # def calculate_fls_converage(fls_ids, fls_id_ignore_list):
-    #     # note that fls_id_ignore_list should be a simple list of FLS IDs
-    #     # * this should ideally be in its own .txt file with one line per FLS ID to ignore
-    #     # * we should read this text file in up above in the check_fls function
-    #     # here we should do the following:
-    #     # * based on the fls_ids data structure, enriched by insert_fls_coverage, and the fls_id_ignore_list we should calculate
-    #     #   * coverage percentage total over the entire FLS
-    #     #   * coverage per chapter
-    #     #     * if an entire chapter has all its FLS IDs on the ignore list, it should then just report an alternate thing,
-    #     #       that cannot be confused for a number
-    #     # * feel free to modify the fls_ids data structure to accomodate and make easier this processing
-    #     pass
 
