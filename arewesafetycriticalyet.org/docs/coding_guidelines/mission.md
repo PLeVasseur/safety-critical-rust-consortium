@@ -4,6 +4,8 @@ Develop a community-vetted coding guideline for Rust in safety-critical applicat
 
 The following are relevant safety-critical coding guidelines. We are also interested in adopting knowledge obtained that may currently be in company-specific documents and incorporating these into the coding guideline.
 
+[**Deployed Safety-Critical Rust Coding Guidelines**](https://coding-guidelines.arewesafetycriticalyet.org/) - _Alpha, Preview_
+
 ## State of Rust Safety-Critical Coding Guidelines
 
 ### SAE: SAfEr Rust Task Force
