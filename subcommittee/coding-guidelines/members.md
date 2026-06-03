@@ -70,4 +70,7 @@
 | Raiki Tamura               | Individual                             | Observer                    | @tamaroning        |
 | Michael Henn               | Hensoldt                               | Observer                    | @mhennsldt         |
 | Mira Baumann               | Individual                             | Producer                    | @inkreasing        |
+| Daniel Dia                 | Individual                             | Producer                    | @danieldia-dev     |
+| Kangwon Lee                | Individual                             | Observer                    | @kangwonlee        |
+| Marcos Borges, PhD         | Individual                             | Producer                    | @MarcosBorgesPhD   |
 
