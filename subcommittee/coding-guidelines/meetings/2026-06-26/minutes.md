@@ -1,4 +1,4 @@
-# **Coding Guidelines Subcommittee Meeting on 2026-06-26 @ 0800 JST / 1600 PDT**
+# **Coding Guidelines Subcommittee Meeting on 2026-06-26 @ 0800 JST / 2026-06-25 @ 1900 EDT**
 
 [Link](https://www.worldtimebuddy.com/?qm=1&lid=5,12,2643743,8,1850147,100,14,14,1835848&h=5&date=2026-6-25&sln=19-20&hf=1) to meeting time in common time zones.
 
