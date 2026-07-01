@@ -24,27 +24,30 @@
     - How do we feel about these? Suggestions?  
 7. Discuss possible 2-3 coding guidelines to choose for Clippy lints (Pete)  
     - How've we done in looking into these?	  
-8. First version of MISRA C \+ CERT C Appendices [live](https://coding-guidelines.arewesafetycriticalyet.org/appendices/standards-matrices/index.html)  
+8. One-off feedback session on Clippy lint mapping to usefulness for safety-critical purposes (David / Pete)
+    - David and Félix will run this session; they are looking at around Thursday, July 16th (2026-07-16)
+    - Please note your interest in [this Zulip thread](https://rust-lang.zulipchat.com/#narrow/channel/445688-safety-critical-consortium/topic/Clippy-linters/with/607612630)!
+9. First version of MISRA C \+ CERT C Appendices [live](https://coding-guidelines.arewesafetycriticalyet.org/appendices/standards-matrices/index.html)  
     - [CERT C](https://github.com/Safety-Critical-Rust-Consortium/safety-critical-rust-coding-guidelines/milestone/3) and [MISRA C](https://github.com/Safety-Critical-Rust-Consortium/safety-critical-rust-coding-guidelines/milestone/4) milestones now established
     - New labels (and board views): [`rationale needed`](https://github.com/orgs/Safety-Critical-Rust-Consortium/projects/4/views/12), [`guideline needed`](https://github.com/orgs/Safety-Critical-Rust-Consortium/projects/4/views/11), [`clippy lint needed`](https://github.com/orgs/Safety-Critical-Rust-Consortium/projects/4/views/13)
-9. Safety-Critical Rust: Items of Shared Value for Fund Pooling (Pete)  
+10. Safety-Critical Rust: Items of Shared Value for Fund Pooling (Pete)  
     - One of the action items Pete took from the SCRC Room at RustWeek 2026  
     - Things seem to be heating up with the formation of the Rust Foundation Maintainers Fund (RFMF) and Ecosystem Fund and the Funding Team. Would be good to make sure we make our needs and requests obvious and clear.  
     - Pete will screen share and show the draft and then share it afterwards for feedback  
     - Would we like to form up a working group temporarily to get this in good shape?  
     - A first (0th?) draft document is available here: [Safety-Critical Rust - Items of Shared Value for Fund Pooling](https://docs.google.com/document/d/1E39cNTjK-5azCeWWFWS1jORsz9nqzMs4CNa6Rm68jV4/edit?usp=sharing)  
-10. Interest in the MISRA C++ mapping (mira / Pete)  
+11. Interest in the MISRA C++ mapping (mira / Pete)  
     - Updates on new things in the MISRA C++ \=\> Rust mapping  
     - In talks with MISRA folks still; but in practice the procedure outlined seemed reasonable to them  
     - Please register interest on [this Zulip thread](https://rust-lang.zulipchat.com/#narrow/channel/579369-safety-critical-consortium.2Fcoding-guidelines/topic/MISRA.20C.2B.2B.20Mapping.20Interest/with/584764785)  
-11. Review batches for [CERT C  Rust Mapping](https://github.com/rustfoundation/safety-critical-rust-coding-guidelines/issues/336) (Pete)  
+12. Review batches for [CERT C  Rust Mapping](https://github.com/rustfoundation/safety-critical-rust-coding-guidelines/issues/336) (Pete)  
 - Let's split up again, to get some feedback on batch 2  
 - [428 \[CERT C Review Batch 2/5\] Review proposed Rust categorization](https://github.com/rustfoundation/safety-critical-rust-coding-guidelines/issues/428)  
 - **Group A**  
   - xx  
 - **Group B**  
   - Xx  
-12. Round table
+13. Round table
 
 ## **Check-in area**
 
